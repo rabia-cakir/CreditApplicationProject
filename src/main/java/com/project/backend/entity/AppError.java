@@ -1,9 +1,7 @@
-package com.project.backend.entity.base;
+package com.project.backend.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import com.project.backend.entity.base.BaseEntityAudit;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -11,9 +9,10 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
+@Builder
 @Entity
 @Table(name = "app_error")
-public class AppError {
+public class AppError extends BaseEntityAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
