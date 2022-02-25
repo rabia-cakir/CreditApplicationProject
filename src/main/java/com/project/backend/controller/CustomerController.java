@@ -1,7 +1,6 @@
 package com.project.backend.controller;
 
 import com.project.backend.service.ICustomerService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
