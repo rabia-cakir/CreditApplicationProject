@@ -1,9 +1,7 @@
 package com.project.backend.entity;
+import com.project.backend.entity.base.BaseEntityAudit;
 import com.project.backend.enums.CreditResult;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -11,10 +9,11 @@ import java.math.BigDecimal;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = false)
 @Builder
 @Entity
 @Table(name="applications")
-public class Application {
+public class Application extends BaseEntityAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;

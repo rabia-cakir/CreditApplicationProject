@@ -1,5 +1,6 @@
 package com.project.backend.entity;
 
+import com.project.backend.entity.base.BaseEntityAudit;
 import lombok.*;
 
 import javax.persistence.*;
@@ -8,10 +9,11 @@ import java.math.BigDecimal;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = false)
 @Builder
 @Entity
 @Table(name = "customers")
-public class Customer {
+public class Customer extends BaseEntityAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
