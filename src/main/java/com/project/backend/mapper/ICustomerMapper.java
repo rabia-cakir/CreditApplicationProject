@@ -10,13 +10,13 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface ICustomerMapper {
 
-    @Named("CustomerDtoToCustomerEntity")
-    Customer CustomerDtoToCustomerEntity(CustomerDto customerDto);
+    @Named("mapFromCustomerDtoToCustomer")
+    Customer mapFromCustomerDtoToCustomer(CustomerDto customerDto);
 
-    @Named("CustomerEntityToCustomerDto")
-    CustomerDto CustomerEntityToCustomerDto(Customer customer);
+    @Named("mapFromCustomerToCustomerDto")
+    CustomerDto mapFromCustomerToCustomerDto(Customer customer);
 
-    @IterableMapping(qualifiedByName = "CustomerEntitiesToCustomerDto")
-    List<CustomerDto> CustomerEntitiesToCustomerDto(List<Customer> customers);
+    @IterableMapping(qualifiedByName = "mapFromCustomerToCustomerDto")
+    List<CustomerDto> mapFromCustomersToCustomerDto(List<Customer> customers);
 
 }
