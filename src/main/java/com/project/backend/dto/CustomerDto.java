@@ -34,7 +34,7 @@ public class CustomerDto {
     @Pattern(regexp="(^[a-zA-Z]{2,50}$)", message = "Last Name must be of characters")
     private String lastName;
 
-    @NotBlank(message = "Salary is mandatory")
+
     @DecimalMax(value = "999999", message = "salary must be 999999 at most")
     @DecimalMin(value = "3000", message = "salary must be at least 3000")
     @Digits(integer=6, fraction=0)

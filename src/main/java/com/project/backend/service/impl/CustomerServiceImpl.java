@@ -6,6 +6,7 @@ import com.project.backend.exception.IdentityNumberIsAlreadyExistException;
 import com.project.backend.exception.PhoneNumberIsAlreadyExistException;
 import com.project.backend.mapper.ICustomerMapper;
 import com.project.backend.repository.ICustomerRepository;
+import com.project.backend.service.IApplicationService;
 import com.project.backend.service.ICustomerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +18,16 @@ public class CustomerServiceImpl implements ICustomerService {
 
     private final ICustomerRepository customerRepository;
     private final ICustomerMapper customerMapper;
+    private final IApplicationService applicationService;
 
     @Autowired
-    public CustomerServiceImpl(ICustomerRepository customerRepository, ICustomerMapper customerMapper) {
-        this.customerRepository = customerRepository;
-        this.customerMapper=customerMapper;
 
-    }
+    public CustomerServiceImpl(ICustomerRepository customerRepository, ICustomerMapper customerMapper, IApplicationService applicationService) {
+        this.customerRepository = customerRepository;
+        this.customerMapper = customerMapper;
+        this.applicationService = applicationService;
+
+}
 
     @Override
     public CustomerDto save(CustomerDto customerDto) {
@@ -36,8 +40,9 @@ public class CustomerServiceImpl implements ICustomerService {
 
         Customer customer=customerMapper.mapFromCustomerDtoToCustomer(customerDto);
         Customer saveCustomer = customerRepository.save(customer);
-
-            return customerMapper.mapFromCustomerToCustomerDto(saveCustomer);
+        applicationService.makeApplication(customer);
+        log.info("CustomerServiceImpl : credit application has been completed");
+        return customerMapper.mapFromCustomerToCustomerDto(saveCustomer);
 
     }
 }
