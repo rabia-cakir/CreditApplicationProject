@@ -8,4 +8,6 @@ import javax.persistence.Id;
 
 @Repository
 public interface ICustomerRepository extends JpaRepository<Customer, Id> {
+    boolean existsByIdentityNumber(String identityNumber);
+    boolean existsByPhoneNumber(String phoneNumber);
 }
