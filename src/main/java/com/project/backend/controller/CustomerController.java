@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 @Slf4j
 @RequestMapping("api/v1/customers")
@@ -23,7 +25,7 @@ public class CustomerController {
     }
 
 
-    public ResponseEntity<CustomerDto> save(@RequestBody CustomerDto customerDto)
+    public ResponseEntity<CustomerDto> save(@RequestBody @Valid CustomerDto customerDto)
     {
         log.info("Controller: Request to the CustomerService to save customer");
         return new ResponseEntity<>(customerService.save(customerDto),HttpStatus.OK);
