@@ -25,7 +25,6 @@ public class ApplicationServiceImpl implements IApplicationService {
     private final IApplicationRepository applicationRepository;
     private final IApplicationMapper applicationMapper;
     private final ScoreService scoreService;
-    //private final NotificationService notificationService;
 
     public ApplicationServiceImpl(IApplicationRepository applicationRepository, IApplicationMapper applicationMapper,
                                   ScoreService scoreService) {
@@ -40,6 +39,7 @@ public class ApplicationServiceImpl implements IApplicationService {
     public ApplicationDto makeApplication(Customer customer) {
         Pair<BigDecimal, CreditResult> result = applicationResult(scoreService.getScore(customer.getIdentityNumber()), customer.getSalary());
         Application application = Application.builder().customer(customer).creditLimit(result.getValue0()).creditResult(result.getValue1()).build();
+        log.info("ApplicationService: Application has been made.");
         return applicationMapper.mapFromApplicationToApplicationDto(applicationRepository.save(application));
     }
 
@@ -48,43 +48,39 @@ public class ApplicationServiceImpl implements IApplicationService {
         Pair<BigDecimal, CreditResult> result = applicationResult(scoreService.getScore(customer.getIdentityNumber()), customer.getSalary());
         Application application = Application.builder().customer(customer).creditLimit(result.getValue0()).creditResult(result.getValue1()).build();Boolean status = (application.getCreditResult() == CreditResult.CONFIRMED);
         application.setId(applicationId);
-        log.info("Service: Sms sending has been completed.");
+        log.info("ApplicationService: Request to the ApplicationRepository to update applications");
         return applicationMapper.mapFromApplicationToApplicationDto(applicationRepository.save(application));
     }
 
     @Override
     public List<ApplicationDto> getAll() {
+        log.info("ApplicationService: Request to the ApplicationRepository to list all applications");
         return applicationMapper.mapFromApplicationsToApplicationDto(applicationRepository.findAll());
     }
 
     @Override
     public ApplicationDto getStatus(String identityNumber) {
 
-        //application: o identy number'a sahip müşterinin application'ı
         Application application = applicationRepository.findByCustomerIdentityNumber(identityNumber);
-        //o müşteri krediye başvurmuş mu gerçekten
         if(Objects.isNull(application)){
+            log.error("Application cannot found");
             throw new ResourceNotFoundException("Application with identity number: " + identityNumber + " not found.");
         }
-        //entity'i dto'ya çeviriyorum
+        log.info("ApplicationService: Request to the ApplicationRepository to get application status");
         return applicationMapper.mapFromApplicationToApplicationDto(application);
     }
 
     @Override
     public Pair<BigDecimal, CreditResult> applicationResult(int score, BigDecimal salary) {
-        //Kredi skoru 500’ün altında ise kullanıcı reddedilir
         if(score < 500){
             return new Pair<>(BigDecimal.valueOf(0), CreditResult.UNCONFIRMED);
-            //Kredi skoru 500 puan ile 1000 puan arasında ise ve aylık geliri 5000 TL’nin altında ise
 
         }else if(score >= 500 && score < 1000 && salary.intValue() <= 5000){
             return new Pair<>(BigDecimal.valueOf(10000), CreditResult.CONFIRMED);
 
-            //Kredi skoru 500 puan ile 1000 puan arasında ise ve aylık geliri 5000 TL’nin üstünde ise
         }else if(score >= 500 && score < 1000 && salary.intValue() > 5000){
             return new Pair<>(BigDecimal.valueOf(20000), CreditResult.CONFIRMED);
 
-            //Kredi skoru 1000 puana eşit veya üzerinde ise
         }else if(score >= 1000){
             return new Pair<>((salary.multiply(BigDecimal.valueOf(AppRule.CREDIT_LIMIT_MULTIPLIER))), CreditResult.CONFIRMED);
         }

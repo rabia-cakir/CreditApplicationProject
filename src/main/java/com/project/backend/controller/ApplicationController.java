@@ -22,25 +22,18 @@ public class ApplicationController {
     }
 
 
-
-
     @ApiOperation(value = "List all applications.")
     @GetMapping
     public ResponseEntity<List<ApplicationDto>> getAll(){
-        log.info("Controller: Request to list all applications");
+        log.info("ApplicationController: Request to the ApplicationService to list all applications");
         return new ResponseEntity<>(applicationService.getAll(), HttpStatus.OK);
     }
 
 
-
-
-
     @ApiOperation(value = "Get application by identity number.")
     @GetMapping("/get-status/{identiyNumber}")
-    //@RequestParam and @PathVariable can both be used to extract values from the request URI, but they are a bit different.
-    //While @RequestParams extract values from the query string, @PathVariables extract values from the URI path
     public ResponseEntity<ApplicationDto> getStatus(@PathVariable("identiyNumber") String identiyNumber){
-        log.info("Controller: Request to fetch application with identity number information");
+        log.info("ApplicationController: Request to the ApplicationService to fetch application with identity number");
         return new ResponseEntity<>(applicationService.getStatus(identiyNumber), HttpStatus.OK);
     }
 
