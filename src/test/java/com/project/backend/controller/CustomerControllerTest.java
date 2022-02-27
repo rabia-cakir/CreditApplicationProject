@@ -33,7 +33,7 @@ public class CustomerControllerTest {
         //given
         CustomerDto customerDto= CustomerDto.builder()
                 .id(1L)
-                .identityNumber("11111111111")
+                .identityNumber("11111111110")
                 .firstName("first name")
                 .lastName("last name")
                 .salary(new BigDecimal(5000))
@@ -60,7 +60,7 @@ public class CustomerControllerTest {
         List<CustomerDto> customerDtos= Arrays.asList(
                 CustomerDto.builder()
                         .id(1L)
-                        .identityNumber("11111111111")
+                        .identityNumber("11111111110")
                         .firstName("first name")
                         .lastName("last name")
                         .salary(new BigDecimal(6000))
