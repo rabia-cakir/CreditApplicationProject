@@ -13,4 +13,5 @@ public interface IApplicationService {
     public Pair<BigDecimal, CreditResult> applicationResult(int score, BigDecimal salary);
     ApplicationDto getStatus(String identityNumber);
     List<ApplicationDto> getAll();
+    ApplicationDto update(Customer customer, long applicationId);
 }

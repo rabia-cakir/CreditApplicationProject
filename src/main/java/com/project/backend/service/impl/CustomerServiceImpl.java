@@ -10,7 +10,6 @@ import com.project.backend.repository.ICustomerRepository;
 import com.project.backend.service.IApplicationService;
 import com.project.backend.service.ICustomerService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -23,48 +22,62 @@ public class CustomerServiceImpl implements ICustomerService {
     private final ICustomerMapper customerMapper;
     private final IApplicationService applicationService;
 
-    @Autowired
     public CustomerServiceImpl(ICustomerRepository customerRepository, ICustomerMapper customerMapper, IApplicationService applicationService) {
         this.customerRepository = customerRepository;
         this.customerMapper = customerMapper;
         this.applicationService = applicationService;
-
-}
-
-    @Override
-    public CustomerDto save(CustomerDto customerDto) {
-        if (customerRepository.existsByIdentityNumber(customerDto.getIdentityNumber())) {
-            log.error("CustomerServiceImpl : Identity number is already exist");
-            throw new IdentityNumberIsAlreadyExistException("Identity number : " + customerDto.getIdentityNumber() + " is already exist");}
-        if (customerRepository.existsByPhoneNumber(customerDto.getPhoneNumber())) {
-            log.error("CustomerServiceImpl: Phone number is already exist");
-            throw new PhoneNumberIsAlreadyExistException("Phone number : "+customerDto.getPhoneNumber()+" is already exist");}
-
-        Customer customer=customerMapper.mapFromCustomerDtoToCustomer(customerDto);
-        Customer saveCustomer = customerRepository.save(customer);
-        applicationService.makeApplication(customer);
-        log.info("CustomerServiceImpl : credit application has been completed");
-        return customerMapper.mapFromCustomerToCustomerDto(saveCustomer);
-
     }
 
     @Override
-    public CustomerDto get(long id) {
-        Customer customer = customerRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("Customer with id: %d not found.", id)));
-        log.error("customer is not found");
-        customerMapper.mapFromCustomerToCustomerDto(customer);
-        return customerMapper.mapFromCustomerToCustomerDto(customer);
+    public CustomerDto save(CustomerDto customerDto) {
+        //daha önce bu identity no ile kayıt yapılmış mı
+        if(customerRepository.existsByIdentityNumber(customerDto.getIdentityNumber())){
+            throw new IdentityNumberIsAlreadyExistException("Identity Number with " + customerDto.getIdentityNumber() + " is already exist.");
+        }
+
+        //daha önce bu numarayla kayıt yapılmış mı
+        if(customerRepository.existsByPhoneNumber(customerDto.getPhoneNumber())){
+            throw new PhoneNumberIsAlreadyExistException("Phone Number with " + customerDto.getPhoneNumber() + " is already exist.");
+        }
+
+        //customer dto entity'e dönüştü
+        Customer customer = customerMapper.mapFromCustomerDtoToCustomer(customerDto);
+
+        //customer veritabanına kaydedildi.
+        Customer saveCustomer = customerRepository.save(customer);
+        log.info("Service: Application has been created.");
+
+        //kredi başvurusunda bulunma
+        applicationService.makeApplication(customer);
+
+        log.info("Service: Sms sending has been completed.");
+        //entity'i dto'ya dönüştürme
+        return customerMapper.mapFromCustomerToCustomerDto(saveCustomer);
     }
 
     @Override
     public CustomerDto update(CustomerDto customerDto) {
-        return null;
+        Customer controlCustomer = customerRepository.findById(customerDto.getId()).get();
+        if(!controlCustomer.getIdentityNumber().equals(customerDto.getIdentityNumber())){
+            if(customerRepository.existsByIdentityNumber(customerDto.getIdentityNumber())){
+                throw new IdentityNumberIsAlreadyExistException("Identity Number with " + customerDto.getIdentityNumber() + " is already exist.");
+            }
+        }
+        if(!controlCustomer.getPhoneNumber().equals(customerDto.getPhoneNumber())) {
+            if (customerRepository.existsByPhoneNumber(customerDto.getPhoneNumber())) {
+                throw new PhoneNumberIsAlreadyExistException("Phone Number with " + customerDto.getPhoneNumber() + " is already exist.");
+            }
+        }
+        Customer customer = customerMapper.mapFromCustomerDtoToCustomer(customerDto);
+        Customer updateCustomer = customerRepository.save(customer);
+        applicationService.update(customer, customerRepository.findByCustomerApplicationId(customer.getId()));
+        log.info("Service: Application update handle has been completed");
+        return customerMapper.mapFromCustomerToCustomerDto(updateCustomer);
     }
 
     @Override
     public void delete(long id) {
-
+        customerRepository.deleteById(id);
     }
 
     @Override
@@ -72,4 +85,10 @@ public class CustomerServiceImpl implements ICustomerService {
         return customerMapper.mapFromCustomersToCustomerDto(customerRepository.findAll());
     }
 
+    @Override
+    public CustomerDto get(long id) {
+        Customer customer = customerRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Customer with id: %d not found.", id)));
+        return customerMapper.mapFromCustomerToCustomerDto(customer);
+    }
 }

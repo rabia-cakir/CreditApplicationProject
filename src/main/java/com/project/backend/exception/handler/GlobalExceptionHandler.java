@@ -5,7 +5,6 @@ import com.project.backend.exception.IdentityNumberIsAlreadyExistException;
 import com.project.backend.exception.PhoneNumberIsAlreadyExistException;
 import com.project.backend.exception.ResourceNotFoundException;
 import com.project.backend.repository.IAppErrorRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

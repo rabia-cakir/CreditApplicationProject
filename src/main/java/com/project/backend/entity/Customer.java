@@ -35,4 +35,5 @@ public class Customer extends BaseEntityAudit {
 
     @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL)
     private Application application;
+
 }

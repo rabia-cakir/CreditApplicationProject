@@ -7,7 +7,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
-import java.util.Date;
+import java.time.Instant;
+
 
 @Data
 @MappedSuperclass
@@ -18,13 +19,10 @@ public class BaseEntityAudit {
     @Column(name = "created_date",nullable = false,updatable = false)
     @CreatedDate
     @CreationTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdDate;
+    private Instant createdDate=Instant.now();
 
 
     @Column(name = "update_date",nullable = false)
-    //Temporal types are the set of time-based types that can be used in persistent state mappings.
-    @Temporal(TemporalType.TIMESTAMP)
     @LastModifiedDate
-    private Date updateDate;
+    private Instant updateDate= Instant.now();
 }
