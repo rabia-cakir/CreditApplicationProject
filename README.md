@@ -1,6 +1,8 @@
 # CreditApplicationProject
 Credit Application Project
+
 Used Technologies
+
 Java 11
 Spring Boot
 Restful API
